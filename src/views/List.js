@@ -1,50 +1,18 @@
-// import moment from 'moment';
-// import Comics from '../classes/Comics';
 import React, { Component } from 'react';
+
+//Currency format
+function currency(value, decimalPosition = 2) {
+  return '$' + value.toFixed(decimalPosition).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+}
 
 //Listado por fechas
 class DaysList extends Component{
-	constructor(props) {
-		super(props);
-    this.state = { items: this.props.Data.collection };
-		// this.state = { items: [] };
-  }
-
-	componentDidMount(){
-		// this.setStateItems();
-	}
-
-	// setStateItems(){
-	// 	this.setState({ items: this.props.Data.collection });
-	// }
-
-	componentWillReceiveProps(nextProps){
-		// this.setStateItems();
-		console.log("Next props!!!");
-		console.log(nextProps);
-		this.state.items = [];
-		// this.setState({ items: nextProps.Data.collection });
-	}
-
-	shouldComponentUpdate(nextProps, nextState) {
-		// console.log(nextProps);
-		// console.log(nextState);
-    if (this.props.Data.collection.length !== nextProps.Data.collection.length) {
-			console.log('Update!')
-      return true;
-    }
-		console.log('Stay the same!');
-    return false;
-  }
-
 	render(){
-		// this.setStateItems();
-		console.log(this.state.items)
-
+		// console.log(this.props)
 		return (
 			<div>
-				<h4 className="day-title">{this.props.Data.day}</h4>
-				<DataTable Data={this.state.items} />
+				<h4 className="day-title">{this.props.Data.day.moment.format('ddd D [de] MMM [del] YYYY')}</h4>
+				<DataTable Data={this.props.Data.collection} />
 			</div>
 		);
 	}
@@ -52,15 +20,11 @@ class DaysList extends Component{
 
 //Tabla principal
 class DataTable extends Component{
-	constructor(props) {
-		super(props);
-
-		this.state = { ComicsThisDay: [] };
-		for(var i = 0; i < this.props.Data.length; i++)
-			this.state.ComicsThisDay.push(<DataTableRow Data={this.props.Data[i]} key={i} />)
-  }
-
 	render(){
+		var ComicsThisDay = [];
+		for(var i = 0; i < this.props.Data.length; i++)
+			ComicsThisDay.push(<DataTableRow Data={this.props.Data[i]} key={i} />);
+
 		return (
 			<table className="day-table">
 				<thead>
@@ -72,7 +36,7 @@ class DataTable extends Component{
 					</tr>
 				</thead>
 				<tbody>
-					{this.state.ComicsThisDay}
+					{ComicsThisDay}
 				</tbody>
 			</table>
 		);
@@ -86,18 +50,19 @@ class DataTableRow extends Component{
 		this.state = this.props.Data;
 	}
 
-	toggleActivo(event){
+	Adquirir(event){
+		this.state.Adquirir();
 		this.setState({adquirido: event.target.checked});
 	}
 
 	render(){
 		return (
 			<tr>
-				<td>{this.state.nombre}</td>
-				<td>{this.state.volume}</td>
-				<td>{this.state.precio}</td>
+				<td>{this.state.titulo}</td>
+				<td>{this.state.volumen}</td>
+				<td>{currency(this.state.precio)}</td>
 				<td>
-					<input type="checkbox" onChange={this.toggleActivo.bind(this)} checked={this.state.adquirido} /></td>
+					<input type="checkbox" onChange={this.Adquirir.bind(this)} checked={this.state.adquirido} /></td>
 			</tr>
 		);
 	}
