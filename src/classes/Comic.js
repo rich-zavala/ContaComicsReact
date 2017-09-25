@@ -12,7 +12,7 @@ export function ComicFields() {
     new ComicField("Variant", "text", false),
     new ComicField("Price", "number"),
     new ComicField("Date", "date"),
-    new ComicField("Acquired", "checkbox", false)
+    new ComicField("Owned", "checkbox", false)
   ];
 }
 
@@ -41,7 +41,7 @@ export class Comic {
       this.variant = o.variant;
       this.price = o.price;
       this.date = o.date;
-      this.acquired = o.acquired;
+      this.owned = o.owned;
     }
   }
 
@@ -99,25 +99,25 @@ export class Comic {
     return this._date.format().toString();
   }
 
-  _acquired = false;
-  get acquired() {
-    return this._acquired;
+  _owned = false;
+  get owned() {
+    return this._owned;
   }
-  set acquired(d) {
-    this._acquired = d && (d === true || d === 1);
-    this._acquiredDate = this._acquired ? moment() : undefined;
+  set owned(d) {
+    this._owned = d && (d === true || d === 1);
+    this._ownedDate = this._owned ? moment() : undefined;
   }
-  get acquiredStr() {
-    return this._acquired ? "Yes" : "No";
-  }
-
-  _acquiredDate;
-  get acquiredDate() {
-    return this._acquiredDate ? moment(this._acquiredDate) : undefined;
+  get ownedStr() {
+    return this._owned ? "Yes" : "No";
   }
 
-  toggleAcquisition() {
-    this.acquired = !this.acquired;
+  _ownedDate;
+  get ownedDate() {
+    return this._ownedDate ? moment(this._ownedDate) : undefined;
+  }
+
+  toggleOwned() {
+    this.owned = !this.owned;
   }
 
   get storable() {
@@ -128,7 +128,7 @@ export class Comic {
       variant: this.variant,
       price: this.price,
       date: this.date,
-      acquired: this.acquired
+      owned: this.owned
     };
   }
 }
