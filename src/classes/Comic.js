@@ -1,31 +1,49 @@
+import {
+  DATE_FORMAT_COMPARE
+} from "../constants/cons";
 import moment from "moment";
+import _ from "lodash";
 
-export function code(rr) {
-  let str = (rr.title + rr.volumen + rr.variant).toString();
+/**
+ * Returns an string to identify a unique Comic
+ * @param {Comic} rr 
+ */
+export function GenerateComicId(rr) {
+  let str = (rr.title + rr.volumen + (rr.variant | "")).toString();
   return str.toLowerCase().replace(/[^a-z0-9]/gi, "");
 }
 
+/**
+ * Returns am array with information for each of the Form's fields
+ */
 export function ComicFields() {
   return [
-    new ComicField("Title", "text"),
-    new ComicField("Volumen", "number"),
-    new ComicField("Variant", "text", false),
-    new ComicField("Price", "number"),
+    new ComicField("Title", "text", "Batman"),
+    new ComicField("Volumen", "number", 1),
+    new ComicField("Variant", "text", undefined, false),
+    new ComicField("Price", "number", 26),
     new ComicField("Date", "date"),
-    new ComicField("Owned", "checkbox", false)
+    new ComicField("Owned", "checkbox", undefined, false)
   ];
 }
 
+/**
+ * Provides an object to provide properties to a form field
+ */
 export class ComicField {
   title = "";
   id = "";
   type = "";
   volumen = "";
   required = true;
-  constructor(title, type, required) {
+  constructor(title, type, value, required) {
     this.title = title;
     this.id = this.title.toLowerCase();
     this.type = type;
+
+    if (typeof value !== "undefined") {
+      this.value = value;
+    }
 
     if (typeof required !== "undefined" && required !== true) {
       this.required = false;
@@ -33,20 +51,48 @@ export class ComicField {
   }
 }
 
+/**
+ * Provides an object to handle a Comic record
+ */
 export class Comic {
   constructor(o) {
-    if (o) {
+    if (!_.isUndefined(o) && !(o instanceof Comic)) {
       this.title = o.title;
       this.volumen = o.volumen;
       this.variant = o.variant;
       this.price = o.price;
       this.date = o.date;
       this.owned = o.owned;
+      this.ownedDate = o.ownedDate;
+
+      if (!_.isUndefined(o._title))
+        this.title = o.title;
+
+      if (!_.isUndefined(o._volumen))
+        this.volumen = o._volumen;
+
+      if (!_.isUndefined(o._variant))
+        this.variant = o._variant;
+
+      if (!_.isUndefined(o._price))
+        this.price = o._price;
+
+      if (!_.isUndefined(o._date))
+        this.date = o._date;
+
+      if (!_.isUndefined(o._owned))
+        this.owned = o._owned;
+
+      if (_.get(this, "owned", false) && !_.isUndefined(o._ownedDate))
+        this.ownedDate = o._ownedDate;
+    } else if (o instanceof Comic) {
+      // console.log("It's instance of Comic!!");
+      return o;
     }
   }
 
   get id() {
-    return code(this);
+    return GenerateComicId(this);
   }
 
   _title;
@@ -54,7 +100,8 @@ export class Comic {
     return this._title;
   }
   set title(d) {
-    if (d) this._title = d.toString();
+    if (d)
+      this._title = d.toString();
   }
 
   _volumen;
@@ -62,8 +109,8 @@ export class Comic {
     return this._volumen;
   }
   set volumen(d) {
-    if (d && !isNaN(d)) {
-      this._volumen = parseInt(d, 10);
+    if (!isNaN(d)) {
+      this._volumen = _.toNumber(d);
     }
   }
 
@@ -72,7 +119,8 @@ export class Comic {
     return this._variant;
   }
   set variant(d) {
-    if (d) this._variant = d.toString();
+    if (d)
+      this._variant = d.toString();
   }
 
   _price;
@@ -80,8 +128,8 @@ export class Comic {
     return this._price;
   }
   set price(d) {
-    if (d && !isNaN(d)) {
-      this._price = parseFloat(d).toFixed(2);
+    if (!isNaN(d)) {
+      this._price = _.toNumber(d);
     }
   }
 
@@ -96,7 +144,7 @@ export class Comic {
     }
   }
   get dateStr() {
-    return this._date.format().toString();
+    return this._date.format(DATE_FORMAT_COMPARE);
   }
 
   _owned = false;
@@ -104,16 +152,23 @@ export class Comic {
     return this._owned;
   }
   set owned(d) {
-    this._owned = d && (d === true || d === 1);
-    this._ownedDate = this._owned ? moment() : undefined;
+    this._owned = typeof d !== "undefined" && (d === true || d === 1);
+    if (this.owned)
+      this.ownedDate = moment();
   }
   get ownedStr() {
     return this._owned ? "Yes" : "No";
   }
 
   _ownedDate;
+  set ownedDate(d) {
+    this._ownedDate = d && !_.isNull(d) ? moment(d) : null;
+  }
   get ownedDate() {
-    return this._ownedDate ? moment(this._ownedDate) : undefined;
+    return this._ownedDate ? moment(this._ownedDate) : null;
+  }
+  get ownedDateStr() {
+    return !_.isNull(this.ownedDate) ? this.ownedDate.format(DATE_FORMAT_COMPARE) : null;
   }
 
   toggleOwned() {
@@ -127,8 +182,9 @@ export class Comic {
       volumen: this.volumen,
       variant: this.variant,
       price: this.price,
-      date: this.date,
-      owned: this.owned
+      date: this.dateStr,
+      owned: this.owned,
+      ownedDate: this.ownedDateStr
     };
   }
 }

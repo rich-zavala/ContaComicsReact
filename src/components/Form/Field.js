@@ -4,7 +4,7 @@ import moment from "moment";
 export default class FormField extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: this.isCheckbox ? false : "" };
+    this.state = { value: this.isCheckbox ? false : this.props.Data.value };
     this.handleChange = this.handleChange.bind(this);
     this.isCheckbox = this.props.Data.type === "checkbox";
   }
