@@ -1,8 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Landing from './views/Main';
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
 
-ReactDOM.render(
-  <Landing />,
-  document.getElementById('root')
-);
+import Landing from "./views/Main";
+import reducers from "./reducers";
+
+ReactDOM.render(<Provider store={createStore(reducers)}><Landing /></Provider>, document.getElementById("root"));

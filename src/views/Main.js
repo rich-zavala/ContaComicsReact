@@ -1,9 +1,20 @@
 import React from 'react';
-import RegistryForm from "../components/Form/Form";
-import CheckList from "../components/CheckList/CheckList";
-import { DB } from '../DBHandlers/DB';
+// import { DB } from '../DBHandlers/DB';
+
+// import RegistryForm from "../components/Form/Form";
+import CheckList from "../containers/CheckList";
 
 export default class Landing extends React.Component {
+  render() {
+    return (
+      <div>
+        <CheckList />
+      </div>
+    );
+  }
+}
+
+/*export default class Landing extends React.Component {
   db = new DB();
 
   render() {
@@ -19,3 +30,4 @@ export default class Landing extends React.Component {
     )
   }
 }
+*/

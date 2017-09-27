@@ -1,5 +1,5 @@
 import { Comic } from "../classes/Comic";
-import { Year } from "./DBYear";
+import { Year } from "../classes/Year";
 import { DB_NAME } from "../constants/cons";
 import _ from "lodash";
 
