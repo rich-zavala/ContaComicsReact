@@ -1,20 +1,31 @@
 import React from "react";
-import { Comic, ComicFields } from "../../classes/Comic";
-import FormField from "./Field";
+import { connect } from "react-redux";
+import { Comic, ComicFields } from "../classes/Comic";
+import FormField from "../components/Field";
 
-export default class RegistryForm extends React.Component {
+class RegistryForm extends React.Component {
   db;
-  records;
+  records = [];
 
   constructor(props) {
     super(props);
-    this.db = this.props.DBInstance;
-    this.records = this.db.records;
-    this.fields = ComicFields().map((f, i) => <FormField Data={f} key={i} />);
+    // this.db = this.props.DBInstance;
+    // this.records = this.db.records;
+    this.createFields();
     this.updateRecords(false);
   }
 
+  // Create an array of fields components
+  createFields() {
+    this.fields = ComicFields().map((f, i) => <FormField Data={f} key={i} />);
+  }
+
   render() {
+    console.group("RegistryForm.render");
+    console.log("props", this.props);
+    console.log("state", this.state);
+    console.groupEnd();
+
     let records = this.records.map((r, i) =>
       <li key={i}>
         {r.title} #{r.volumen}
@@ -52,11 +63,20 @@ export default class RegistryForm extends React.Component {
   }
 
   updateRecords(update) {
-    console.log("Records > ", this.records);
-    if (update === true) this.forceUpdate();
+    console.log("RegistryForm.updateRecords.records > ", this.records);
+    // if (update === true) this.forceUpdate();
   }
 
   afterSubmit() {
     this.updateRecords(true);
   }
 }
+
+function mapStateToProps(state) {
+  console.log("RegistryForm.mapStateToProps.state", state);
+  return {
+    activeYear: state.activeYear
+  };
+}
+
+export default connect(mapStateToProps)(RegistryForm);
