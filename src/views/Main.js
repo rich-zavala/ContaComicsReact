@@ -1,16 +1,19 @@
 import React from 'react';
 // import { DB } from '../DBHandlers/DB';
 
-import RegistryForm from "../containers/Form";
-import CheckList from "../containers/CheckList";
+// import RegistryForm from "../containers/Form";
+// import CheckList from "../containers/CheckList";
+import TestComponent from "../containers/Tests";
 
 export default class Landing extends React.Component {
   render() {
     return (
       <div>
+        <div><TestComponent /></div>
+        {/* <hr />
         <div><RegistryForm /></div>
         <hr />
-        <div><CheckList /></div>
+        <div><CheckList /></div> */}
       </div>
     );
   }

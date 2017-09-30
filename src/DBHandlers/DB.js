@@ -1,69 +1,59 @@
+import Dexie from 'dexie';
 import { Comic } from "../classes/Comic";
 import { Year } from "../classes/Year";
 import { DB_NAME } from "../constants/cons";
-import _ from "lodash";
+import moment from "moment";
+
+const db = new Dexie(DB_NAME);
+db.version(1).stores({
+  years: "&name",
+  records: "&id"
+});
 
 export class DB {
-  records = [];
-  recordsObjects = [];
-  years = [];
-
-  constructor() {
-    this.getComics();
-  }
-
-  getComics() {
-    console.warn("Calling getComics from DB!!");
-    this.records = [];
-    this.recordsObjects = [];
-    this.years = [];
-    let data = localStorage.getItem(DB_NAME);
-    if (data) {
-      this.records = JSON.parse(data);
-      this.recordsObjects = this.records.map(c => {
-        let comic = new Comic(c);
-        this.addRecordYear(comic);
-        this.years.sort((a, b) => a.name > b.name);
-        return comic;
-      });
-      console.warn("Year array", this.years);
-      return this.recordsObjects;
-    } else {
-      return [];
+  addYear(year) {
+    if (!(year instanceof Year)) {
+      year = new Year(year);
     }
+
+    return db.years.put(year);
   }
 
-  save() {
-    localStorage.setItem(DB_NAME, JSON.stringify(this.records));
-    return true;
+  addDate(date) {
+    date = moment(date);
+    let dateYear = date.year();
+    return db.years.get(dateYear)
+      .then(dbYear => {
+        if (dbYear) {
+          let year = new Year(dbYear.name).setDates(dbYear.dates);
+          year.addDate(date);
+          return db.years.put(this.storable(year))
+            .then(() => this.getYears());
+        } else {
+          return this.addYear(dateYear)
+            .then(() => {
+              return this.addDate(date);
+            });
+        }
+      });
   }
 
   addRecord(record) {
-    if (this.records.filter(r => r.id === record.id).length === 0) {
-      console.group("Adding > ", record.id);
-      this.records.push(record.storable);
-      this.recordsObjects.push(record);
-      this.addRecordYear(record);
-      console.log("Years > ", this.years);
-      console.groupEnd();
-      return this.save();
-    } else {
-      return false;
+    if (!(record instanceof Comic)) {
+      record = new Comic(record);
     }
+
+    return db.records.add(record.storable)
+      .then(() => {
+        return this.addDate(record.date);
+      });
   }
 
-  addRecordYear(record) {
-    let recordYear = record.date.year();
-    let yearInCatalog = this.getRecordYear(recordYear);
-    if (!yearInCatalog) {
-      yearInCatalog = new Year(recordYear);
-      yearInCatalog.addRecord(record);
-      this.years.push(yearInCatalog);
-    }
-    yearInCatalog.addRecord(record);
+  getYears() {
+    return db.years.toArray();
   }
 
-  getRecordYear(year) {
-    return _.first(this.years.filter(y => y.name === year));
+  storable(obj) {
+    return JSON.parse(JSON.stringify(obj));
   }
 }

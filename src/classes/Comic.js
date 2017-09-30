@@ -9,7 +9,7 @@ import _ from "lodash";
  * @param {Comic} rr 
  */
 export function GenerateComicId(rr) {
-  let str = (rr.title + rr.volumen + (rr.variant | "")).toString();
+  let str = (rr.title + rr.volumen + (rr.variant || "")).toString();
   return str.toLowerCase().replace(/[^a-z0-9]/gi, "");
 }
 
@@ -66,7 +66,7 @@ export class Comic {
       this.ownedDate = o.ownedDate;
 
       if (!_.isUndefined(o._title))
-        this.title = o.title;
+        this.title = o._title;
 
       if (!_.isUndefined(o._volumen))
         this.volumen = o._volumen;

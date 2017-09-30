@@ -1,5 +1,5 @@
 import { Comic } from "../classes/Comic";
-import { Day } from "../classes/Day";
+// import { Day } from "../classes/Day";
 import { DATE_FORMAT_COMPARE } from "../constants/cons";
 import _ from "lodash";
 
@@ -11,15 +11,16 @@ export class Year {
     this.name = _.toNumber(name);
   }
 
+  /**
+   * 
+   * @param {moment} date 
+   */
   addDate(date) {
     let dateYear = date.year();
     if (dateYear === this.name) {
-      let dateInCollection = this.getDay(date.format(DATE_FORMAT_COMPARE));
-      if (!dateInCollection) {
-        dateInCollection = new Day(date);
-        this.dates.push(dateInCollection);
-      }
-      return dateInCollection;
+      this.dates.push(date.format(DATE_FORMAT_COMPARE));
+      this.dates = _.uniq(this.dates)
+      return this.dates;
     } else {
       throw new Error("This date's year is different to " + this.name + ": " + dateYear);
     }
@@ -30,7 +31,18 @@ export class Year {
     this.addDate(record.date).addRecord(record);
   }
 
-  getDay(date) {
-    return _.first(this.dates.filter(dateRecord => dateRecord.dateStr === date));
+
+
+  // getDay(date) {
+  //   return _.first(this.dates.filter(dateRecord => dateRecord.dateStr === date));
+  // }
+
+  /**
+   * Attach an array of "Day" typed elements to this.dates
+   */
+  setDates(dates) {
+    // this.dates = dates.map(date => new Day(dates.date, dates.records));
+    this.dates = dates;
+    return this;
   }
 }
