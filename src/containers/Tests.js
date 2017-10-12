@@ -1,6 +1,6 @@
 import React from "react";
 import { Comic } from "../classes/Comic";
-import DayList from "./DayList";
+// import DayList from "./DayList";
 import { DB } from "../DBHandlers/DB";
 
 export default class TestComponent extends React.Component {
@@ -11,13 +11,12 @@ export default class TestComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = { years: [], comic: this.comic };
-    this.setYears();
+    // this.setYears();
     this.setComicData(false);
   }
 
   render() {
-    // console.log(this.state.years);
-    let years = this.state.years.map(year => <DayList key={year.name} year={year} />);
+    // let years = this.state.years.map(year => <DayList key={year.name} year={year} />);
     return (
       <div>
         <div><pre>{JSON.stringify(this.state.comic, null, 2)}</pre></div>
@@ -36,8 +35,8 @@ export default class TestComponent extends React.Component {
           <hr />
           <button type="button" onClick={this.resetDB.bind(this)}>Reset DB</button>
         </form>
-        <hr />
-        <div>{years}</div>
+        {/* <hr />
+        <div>{years}</div> */}
       </div>
     );
   }
@@ -78,15 +77,15 @@ export default class TestComponent extends React.Component {
     window.location.reload();
   }
 
-  setYears() {
-    return this.db.getYears()
-      .then(years => {
-        this.setState({ years });
-        this.ready = true;
-      });
-  }
+  // setYears() {
+  //   return this.db.getYears()
+  //     .then(years => {
+  //       this.setState({ years });
+  //       this.ready = true;
+  //     });
+  // }
 
-  setStateComic() {
-    this.setState({ comic: this.comic });
-  }
+  // setStateComic() {
+  //   this.setState({ comic: this.comic });
+  // }
 }

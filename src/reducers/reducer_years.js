@@ -1,9 +1,13 @@
 import { Year } from "../classes/Year";
+import { ACTIONS } from "../constants/cons";
 
-export default function () {
-  let years = [];
-  for (let i = 2015; i < 2018; i++) {
-    years.push(new Year(i));
+let yearsCatalog = [];
+export default function (state = [], action) {
+  switch(action.type) {
+    case ACTIONS.YEARS_LIST:
+      yearsCatalog = action.payload.map(year => new Year(year));
+      return [...yearsCatalog, ...state];
+    default:
+      return state;
   }
-  return years;
 }

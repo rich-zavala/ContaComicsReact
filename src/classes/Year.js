@@ -7,8 +7,10 @@ export class Year {
   name;
   dates = [];
 
-  constructor(name) {
-    this.name = _.toNumber(name);
+  constructor(o) {
+    this.name = _.toNumber(o.name);
+    this.dates = o.dates || [];
+    this.sortDates();
   }
 
   /**
@@ -19,7 +21,8 @@ export class Year {
     let dateYear = date.year();
     if (dateYear === this.name) {
       this.dates.push(date.format(DATE_FORMAT_COMPARE));
-      this.dates = _.uniq(this.dates)
+      this.dates = _.uniq(this.dates);
+      this.sortDates();
       return this.dates;
     } else {
       throw new Error("This date's year is different to " + this.name + ": " + dateYear);
@@ -29,6 +32,11 @@ export class Year {
   addRecord(record) {
     record = new Comic(record);
     this.addDate(record.date).addRecord(record);
+  }
+
+  sortDates() {
+    this.dates.reverse();
+    console.log(this.dates);
   }
 
 
@@ -43,6 +51,7 @@ export class Year {
   setDates(dates) {
     // this.dates = dates.map(date => new Day(dates.date, dates.records));
     this.dates = dates;
+    this.sortDates();
     return this;
   }
 }

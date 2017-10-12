@@ -13,9 +13,8 @@ db.version(1).stores({
 export class DB {
   addYear(year) {
     if (!(year instanceof Year)) {
-      year = new Year(year);
+      year = new Year({ name: year });
     }
-
     return db.years.put(year);
   }
 
@@ -25,7 +24,7 @@ export class DB {
     return db.years.get(dateYear)
       .then(dbYear => {
         if (dbYear) {
-          let year = new Year(dbYear.name).setDates(dbYear.dates);
+          let year = new Year(dbYear);
           year.addDate(date);
           return db.years.put(this.storable(year))
             .then(() => this.getYears());
@@ -55,5 +54,25 @@ export class DB {
 
   storable(obj) {
     return JSON.parse(JSON.stringify(obj));
+  }
+
+  getRecordsFromYear(year) {
+    if(year instanceof Year) {
+      year = year.name;
+    }
+
+    return db.records
+      .filter(record => {
+        return record.date.split("-")[0] === year.toString();
+      })
+      .toArray();
+  }
+  
+  clearYear() {
+    return db.years.clear();
+  }
+    
+  clearRecords() {
+    return db.records.clear();
   }
 }

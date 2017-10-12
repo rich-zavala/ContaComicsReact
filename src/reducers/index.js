@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
 import YearsReducer from "./reducer_years";
-import ActiveYearReducer from "./reducer_active_year";
+import SelectedYearReducer from "./reducer_selected_year";
 
 const rootReducer = combineReducers({
   years: YearsReducer,
-  activeYear: ActiveYearReducer
+  yearRecords: SelectedYearReducer
 });
 
 export default rootReducer;
