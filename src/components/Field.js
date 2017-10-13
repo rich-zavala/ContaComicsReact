@@ -4,9 +4,17 @@ import moment from "moment";
 export default class FormField extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: this.isCheckbox ? false : this.props.Data.value };
+    this.propsToState(this.props);
     this.handleChange = this.handleChange.bind(this);
     this.isCheckbox = this.props.Data.type === "checkbox";
+  }
+
+  propsToState(props) {
+    this.state = { value: this.isCheckbox ? false : props.Data.value };
+  }
+
+  componentWillReceiveProps(props) {
+    this.propsToState(props);
   }
 
   handleChange(event) {
@@ -41,8 +49,9 @@ export default class FormField extends React.Component {
     }
 
     // Handle date default value
-    if (this.props.Data.type === "date" && (!this.state.value || this.state.value === ""))
+    if (this.props.Data.type === "date" && (!this.state.value || this.state.value === "")) {
       attributes.value = fieldDateNow();
+    }
 
     return (
       <div>

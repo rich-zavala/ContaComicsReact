@@ -18,12 +18,12 @@ export function GenerateComicId(rr) {
  */
 export function ComicFields() {
   return [
-    new ComicField("Title", "text", "Batman"),
-    new ComicField("Volumen", "number", 1),
+    new ComicField("Title", "text", "Guardians Of The Galaxy"),
+    new ComicField("Volumen", "number", "1"),
     new ComicField("Variant", "text", undefined, false),
-    new ComicField("Price", "number", 26),
+    new ComicField("Price", "number", "26"),
     new ComicField("Date", "date"),
-    new ComicField("Owned", "checkbox", undefined, false)
+    new ComicField("Owned", "checkbox", false, false)
   ];
 }
 
@@ -34,7 +34,7 @@ export class ComicField {
   title = "";
   id = "";
   type = "";
-  volumen = "";
+  // volumen = "";
   required = true;
   constructor(title, type, value, required) {
     this.title = title;
@@ -57,34 +57,17 @@ export class ComicField {
 export class Comic {
   constructor(o) {
     if (!_.isUndefined(o) && !(o instanceof Comic)) {
-      this.title = o.title;
-      this.volumen = o.volumen;
-      this.variant = o.variant;
-      this.price = o.price;
-      this.date = o.date;
-      this.owned = o.owned;
+      this.title = o._title || o.title;
+      this.volumen = o._volumen || o.volumen;
+      this.variant = o._variant || o.variant;
+      this.price = o._price || o.price;
+      this.date = o._date || o.date;
+      this.owned = o._owned || o.owned || false;
       this.ownedDate = o.ownedDate;
 
-      if (!_.isUndefined(o._title))
-        this.title = o._title;
-
-      if (!_.isUndefined(o._volumen))
-        this.volumen = o._volumen;
-
-      if (!_.isUndefined(o._variant))
-        this.variant = o._variant;
-
-      if (!_.isUndefined(o._price))
-        this.price = o._price;
-
-      if (!_.isUndefined(o._date))
-        this.date = o._date;
-
-      if (!_.isUndefined(o._owned))
-        this.owned = o._owned;
-
-      if (_.get(this, "owned", false) && !_.isUndefined(o._ownedDate))
+      if (_.get(this, "owned", false) && !_.isUndefined(o._ownedDate)) {
         this.ownedDate = o._ownedDate;
+      }
     } else if (o instanceof Comic) {
       // console.log("It's instance of Comic!!");
       return o;

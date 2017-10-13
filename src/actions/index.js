@@ -12,12 +12,29 @@ export function getYears() {
 }
 
 export function selectYear(year) {
-  console.log("A year have been selected", year);
-  
-  // selectYear is an ActionCreator so it needs to return an action,
-  // as an object with a "type" property
   return {
     type: ACTIONS.YEAR_SELECTED,
     payload: db.getRecordsFromYear(year)
   };
+}
+
+export function addRecord(comic) {
+  return {
+    type: ACTIONS.ADD_RECORD,
+    payload: db.addRecord(comic)
+  }
+}
+
+export function updateYear(year) {
+  return {
+    type: ACTIONS.YEAR_UPDATE,
+    payload: db.getYear(year)
+  }
+}
+
+export function updateDateRecords(year) {
+  return {
+    type: ACTIONS.YEAR_SELECTED,
+    payload: db.getRecordsFromYear(year)
+  }
 }

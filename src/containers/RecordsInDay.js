@@ -1,19 +1,19 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { selectYear } from "../actions/index";
+// import { selectYear } from "../actions/index";
 
 class RecordsInDay extends React.Component {
   records = [];
 
   render() {
     let records;
-    if(this.records) {
+    if (this.records) {
       records = this.records.map(record => {
         return (
           <div key={record.id}>{record.title} #{record.volumen}</div>
         );
-      }); 
+      });
     }
 
     return (
@@ -37,7 +37,8 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ selectYear }, dispatch);
+  // return bindActionCreators({ selectYear }, dispatch);
+  return bindActionCreators({}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecordsInDay);

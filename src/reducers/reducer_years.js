@@ -1,12 +1,32 @@
 import { Year } from "../classes/Year";
 import { ACTIONS } from "../constants/cons";
+import * as _ from "lodash";
 
 let yearsCatalog = [];
 export default function (state = [], action) {
-  switch(action.type) {
+  // if (!action.type.includes("@@")) {
+  //   console.group("reducer_years");
+  //   console.warn("state > ", state)
+  //   console.log("action > ", action)
+  //   console.groupEnd();
+  // }
+
+  switch (action.type) {
     case ACTIONS.YEARS_LIST:
       yearsCatalog = action.payload.map(year => new Year(year));
       return [...yearsCatalog, ...state];
+
+    case ACTIONS.YEAR_UPDATE:
+      let updatedYear = new Year(_.first(action.payload));
+      let index = _.findIndex(yearsCatalog, (year) => year.name === updatedYear.name);
+      if (index >= 0) { // Year exists
+        yearsCatalog[index] = updatedYear;
+      } else { // Add year and sort
+        yearsCatalog.push(updatedYear);
+        yearsCatalog = yearsCatalog.sort((a, b) => b.name - a.name);
+      }
+      return [...yearsCatalog];
+
     default:
       return state;
   }

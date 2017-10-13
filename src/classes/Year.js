@@ -2,6 +2,7 @@ import { Comic } from "../classes/Comic";
 // import { Day } from "../classes/Day";
 import { DATE_FORMAT_COMPARE } from "../constants/cons";
 import _ from "lodash";
+import moment from "moment";
 
 export class Year {
   name;
@@ -10,7 +11,6 @@ export class Year {
   constructor(o) {
     this.name = _.toNumber(o.name);
     this.dates = o.dates || [];
-    this.sortDates();
   }
 
   /**
@@ -22,7 +22,7 @@ export class Year {
     if (dateYear === this.name) {
       this.dates.push(date.format(DATE_FORMAT_COMPARE));
       this.dates = _.uniq(this.dates);
-      this.sortDates();
+      this.dates.sort((a, b) => parseInt(moment(b).valueOf(), 10) - parseInt(moment(a).valueOf(), 10));
       return this.dates;
     } else {
       throw new Error("This date's year is different to " + this.name + ": " + dateYear);
@@ -34,13 +34,6 @@ export class Year {
     this.addDate(record.date).addRecord(record);
   }
 
-  sortDates() {
-    this.dates.reverse();
-    console.log(this.dates);
-  }
-
-
-
   // getDay(date) {
   //   return _.first(this.dates.filter(dateRecord => dateRecord.dateStr === date));
   // }
@@ -51,7 +44,7 @@ export class Year {
   setDates(dates) {
     // this.dates = dates.map(date => new Day(dates.date, dates.records));
     this.dates = dates;
-    this.sortDates();
+    _.reverse(this.dates);
     return this;
   }
 }

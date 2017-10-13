@@ -3,15 +3,15 @@ import moment from "moment";
 import { DB } from "../DBHandlers/DB";
 import { Comic } from "../classes/Comic";
 
-// import RegistryForm from "../containers/RegistryForm";
+import RegistryForm from "../containers/RegistryForm";
 import YearList from "../containers/YearList";
-import TestComponent from "../containers/Tests";
+// import TestComponent from "../containers/Tests";
 
 export default class Landing extends React.Component {
   constructor() {
     super();
     this.state = {
-      section: "records"
+      section: "form"
     };
   }
 
@@ -31,7 +31,7 @@ export default class Landing extends React.Component {
         <div><CheckList /></div> */}
         <hr />
         <div className={this.state.section !== "records" ? "hidden" : ""}><YearList /></div>
-        <div className={this.state.section !== "form" ? "hidden" : ""}><TestComponent /></div>
+        <div className={this.state.section !== "form" ? "hidden" : ""}><RegistryForm /></div>
       </div >
     );
   }
@@ -49,12 +49,12 @@ export default class Landing extends React.Component {
       while (s.length < size) s = "0" + s;
       return s;
     };
-    let genYear = () => Math.floor(Math.random() * 4) + 2015;
-    let genMonth = () => pad(Math.floor(Math.random() * 6) + 1, 2);
-    let genDay = () => pad(Math.floor(Math.random() * 15) + 1, 2);
+    let genYear = () => Math.floor(Math.random() * 3) + 2015;
+    let genMonth = () => pad(Math.floor(Math.random() * 5) + 1, 2);
+    let genDay = () => pad(Math.floor(Math.random() * 12) + 1, 2);
     let genComic = (i) => {
       let date = genYear() + "-" + genMonth() + "-" + genDay();
-      let  o = {
+      let o = {
         title: "Batman",
         price: 26,
         volumen: i,
@@ -67,24 +67,23 @@ export default class Landing extends React.Component {
       .then(() => {
         db.clearRecords()
           .then(() => {
-            var timestamp = moment();
-            let limit = 1500;
+            let limit = 10;
             let current = 0;
             let adding = () => db.addRecord(genComic(current)).then(() => {
-              if(current < limit) {
-                current ++;
+              if (current < limit) {
+                current++;
                 adding();
               } else {
-                alert("DB reseting done! > " + moment().diff(timestamp));
+                // console.log("DB reseting done! > " + moment().diff(timestamp));
                 window.location.reload();
               }
             });
-            
+
             console.log("Working reseting DB...");
             adding();
-        });
+          });
       });
-    }
+  }
 }
 
 /*export default class Landing extends React.Component {

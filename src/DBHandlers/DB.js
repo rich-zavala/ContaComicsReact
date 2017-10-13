@@ -49,7 +49,11 @@ export class DB {
   }
 
   getYears() {
-    return db.years.toArray();
+    return db.years.reverse().toArray();
+  }
+
+  getYear(year) {
+    return db.years.filter(record => record.name.toString() === year.toString()).toArray();
   }
 
   storable(obj) {
@@ -57,7 +61,7 @@ export class DB {
   }
 
   getRecordsFromYear(year) {
-    if(year instanceof Year) {
+    if (year instanceof Year) {
       year = year.name;
     }
 
@@ -67,11 +71,11 @@ export class DB {
       })
       .toArray();
   }
-  
+
   clearYear() {
     return db.years.clear();
   }
-    
+
   clearRecords() {
     return db.records.clear();
   }

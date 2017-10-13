@@ -1,36 +1,16 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Comic, ComicFields } from "../classes/Comic";
+import { bindActionCreators } from "redux";
+import { addRecord, updateYear, selectYear } from "../actions/index";
 import FormField from "../components/Field";
+import { Comic, ComicFields } from "../classes/Comic";
+import * as _ from "lodash";
 
 class RegistryForm extends React.Component {
-  db;
-  records = [];
-
-  constructor(props) {
-    super(props);
-    // this.db = this.props.DBInstance;
-    // this.records = this.db.records;
-    this.createFields();
-    this.updateRecords(false);
-  }
-
-  // Create an array of fields components
-  createFields() {
-    this.fields = ComicFields().map((f, i) => <FormField Data={f} key={i} />);
-  }
+  fields;
 
   render() {
-    console.group("RegistryForm.render");
-    console.log("props", this.props);
-    console.log("state", this.state);
-    console.groupEnd();
-
-    let records = this.records.map((r, i) =>
-      <li key={i}>
-        {r.title} #{r.volumen}
-      </li>
-    );
+    this.fields = ComicFields().map((f, i) => <FormField Data={f} key={i} />);
 
     return (
       <div>
@@ -38,33 +18,38 @@ class RegistryForm extends React.Component {
           {this.fields}
           <button type="submit">Registrar</button>
         </form>
-        <ul>{records}</ul>
       </div>
     );
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    let submitObject = new Comic();
-    this.fields.forEach(f => {
-      submitObject[f.props.Data.id] = f.props.Data.value;
-    });
+    console.log(this.props, this.state);
+    let recordObject = new Comic(this.fieldsValues());
+    this.props.addRecord(recordObject)
+      .then(r => {
+        if (!r.error) {
+          let year = recordObject.date.year();
+          this.props.updateYear(year);
+          this.forceUpdate(); // Reset form
 
-    console.groupCollapsed("Submitting data");
-    console.log("Fields values >> ", this.fields);
-    console.log("Comic subject >> ", submitObject);
-    if (this.db.addRecord(submitObject)) {
-      this.afterSubmit();
-      console.log("Stored!");
-    } else {
-      console.log("This record is already stored :(");
-    }
-    console.groupEnd();
+          // To know if year-record repopulation is needed, lets take a
+          // look into props.yearRecords and see if one is from same year
+          if (_.first(this.props.yearRecords).date.year() === year) {
+            this.props.selectYear(year);
+          }
+        } else {
+          console.log("This record is already stored :(", r.payload.message)
+        }
+      });
   }
 
-  updateRecords(update) {
-    console.log("RegistryForm.updateRecords.records > ", this.records);
-    // if (update === true) this.forceUpdate();
+  fieldsValues() {
+    let recordAttributes = {};
+    this.fields.forEach(f => {
+      recordAttributes[f.props.Data.id] = f.props.Data.value;
+    });
+    return recordAttributes;
   }
 
   afterSubmit() {
@@ -72,11 +57,12 @@ class RegistryForm extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  console.log("RegistryForm.mapStateToProps.state", state);
-  return {
-    activeYear: state.activeYear
-  };
+function mapStateToProps(state) { // This is how React and Redux get glued!
+  return state;
 }
 
-export default connect(mapStateToProps)(RegistryForm);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ addRecord, updateYear, selectYear }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RegistryForm);
