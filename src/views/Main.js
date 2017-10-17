@@ -50,8 +50,8 @@ export default class Landing extends React.Component {
       return s;
     };
     let genYear = () => Math.floor(Math.random() * 3) + 2015;
-    let genMonth = () => pad(Math.floor(Math.random() * 5) + 1, 2);
-    let genDay = () => pad(Math.floor(Math.random() * 12) + 1, 2);
+    let genMonth = () => pad(Math.floor(Math.random() * 3) + 1, 2);
+    let genDay = () => pad(Math.floor(Math.random() * 5) + 1, 2);
     let genComic = (i) => {
       let date = genYear() + "-" + genMonth() + "-" + genDay();
       let o = {
@@ -67,7 +67,7 @@ export default class Landing extends React.Component {
       .then(() => {
         db.clearRecords()
           .then(() => {
-            let limit = 3;
+            let limit = 500;
             let current = 0;
             let adding = () => db.addRecord(genComic(current)).then(() => {
               if (current < limit) {

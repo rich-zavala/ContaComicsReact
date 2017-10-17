@@ -17,6 +17,7 @@ export default function (state = [], action) {
 
     case ACTIONS.RECORD_DELETE:
       state = _.remove(state, record => record.id !== action.payload.removedRecord.id);
+      // console.log(state);
       return state;
 
     default:

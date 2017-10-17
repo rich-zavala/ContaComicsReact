@@ -45,10 +45,3 @@ export function deleteRecord(record) {
     payload: db.deleteRecord(record)
   }
 }
-
-// export function updateDateRecords(year) {
-//   return {
-//     type: ACTIONS.YEAR_SELECTED,
-//     payload: db.getRecordsFromYear(year)
-//   }
-// }

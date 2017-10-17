@@ -3,10 +3,11 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { getYears, selectYear } from "../actions/index";
 import RecordsInDay from "./RecordsInDay";
+import * as _ from "lodash";
+
+const DEBUG = false;
 
 class YearList extends React.Component {
-  firstYearRender = true;
-
   constructor(props) {
     super(props);
     this.state = {
@@ -67,12 +68,37 @@ class YearList extends React.Component {
   }
 
   shouldComponentUpdate(newProps) {
-    return (newProps.years.length > 0 && newProps.yearRecords.length > 0) || (newProps.years.length === 0 && newProps.yearRecords.length === 0);
+    let res = (newProps.years.length > 0 && newProps.yearRecords.length > 0) || (newProps.years.length === 0 && newProps.yearRecords.length === 0);
+    DEBUG && console.group("Evaluating update of Year");
+    if (res) {
+      DEBUG && console.log("Year > ", this.state.year.name);
+      DEBUG && console.group("newProps");
+      DEBUG && console.log("newProps", this.props);
+      DEBUG && console.log("newProps.years", newProps.years);
+      DEBUG && console.log("newProps.yearRecords", newProps.yearRecords.length);
+      DEBUG && console.groupEnd();
+      DEBUG && console.group("props");
+      DEBUG && console.log("props", this.props);
+      DEBUG && console.log("props.years", this.props.years);
+      DEBUG && console.log("props.yearRecords", this.props.yearRecords.length);
+      DEBUG && console.groupEnd();
+      DEBUG && console.log("state", this.state);
+
+      if (_.isEqual(newProps.years, this.props.years) && this.props.yearRecords.length > 0) {
+        DEBUG && console.log(this.red(newProps.years));
+        DEBUG && console.log(this.red(this.props.years));
+        res = false;
+      }
+    }
+    DEBUG && console.warn("Update? > ", res);
+    DEBUG && console.groupEnd();
+    return res;
   }
 
   selectYear(year) {
-    if (!this.state || !this.state.year || this.state.year.name !== year.name) {
+    if (this.state.year.name !== year.name) {
       this.setYear(year);
+      this.forceUpdate();
     }
   }
 

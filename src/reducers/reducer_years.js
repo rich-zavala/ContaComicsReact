@@ -29,7 +29,6 @@ export default function (state = [], action) {
       return [...yearsCatalog];
 
     case ACTIONS.RECORD_DELETE:
-      // console.log(action.payload);
       if (action.payload.removedDate) {
         yearsCatalog.forEach((year, index) => {
           if (year.name === action.payload.year.name) {
@@ -42,7 +41,7 @@ export default function (state = [], action) {
           }
         });
       }
-      console.log("yearsCatalog", [...yearsCatalog]);
+      // console.log("yearsCatalog", [...yearsCatalog]);
       return [...yearsCatalog];
 
     default:

@@ -9,8 +9,6 @@ class Record extends React.Component {
   constructor(props) {
     super(props);
     this.record = this.props.Data;
-
-    // console.log(this.props);
   }
 
   render() {

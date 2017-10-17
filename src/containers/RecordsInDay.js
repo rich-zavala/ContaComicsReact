@@ -3,12 +3,21 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Record from "./Record";
 import { deleteRecord } from "../actions/index";
+import * as _ from "lodash";
+import moment from "moment";
+
+const DEBUG = false;
 
 class RecordsInDay extends React.Component {
   records = [];
+  sum = 0;
+  date;
+
   constructor(props) {
     super(props);
+    this.date = moment(this.props.day).format("D MMMM, YYYY");
     this.records = this.filterRecords(props.yearRecords);
+    this.doSum();
   }
 
   render() {
@@ -19,7 +28,10 @@ class RecordsInDay extends React.Component {
 
     return (
       <div>
-        <h4>{this.props.day}</h4>
+        <h4>
+          <span>{this.date}</span>
+          <span className="pull-right">$ {this.sum}</span>
+        </h4>
         <div>
           {records}
         </div>
@@ -30,8 +42,10 @@ class RecordsInDay extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     let newRecords = this.filterRecords(nextProps.yearRecords);
-    if (newRecords.length !== this.records.length) {
+    if (!_.isEqual(newRecords, this.records)) {
       this.records = newRecords;
+      this.doSum();
+      DEBUG && console.log("Updating > ", this.date);
       return true;
     } else {
       return false;
@@ -40,6 +54,14 @@ class RecordsInDay extends React.Component {
 
   filterRecords(collection) {
     return collection.filter(record => record.dateStr === this.props.day);
+  }
+
+  doSum() {
+    if (this.records.length > 0) {
+      this.sum = this.records
+        .map(record => record.price)
+        .reduce((total, record) => total + record);
+    }
   }
 }
 
