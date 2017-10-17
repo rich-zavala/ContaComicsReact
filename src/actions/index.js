@@ -18,10 +18,10 @@ export function selectYear(year) {
   };
 }
 
-export function addRecord(comic) {
+export function addRecord(record) {
   return {
     type: ACTIONS.ADD_RECORD,
-    payload: db.addRecord(comic)
+    payload: db.addRecord(record)
   }
 }
 
@@ -32,9 +32,23 @@ export function updateYear(year) {
   }
 }
 
-export function updateDateRecords(year) {
+export function updateRecord(record) {
   return {
-    type: ACTIONS.YEAR_SELECTED,
-    payload: db.getRecordsFromYear(year)
+    type: ACTIONS.RECORD_UPDATE,
+    payload: db.updateRecord(record)
   }
 }
+
+export function deleteRecord(record) {
+  return {
+    type: ACTIONS.RECORD_DELETE,
+    payload: db.deleteRecord(record)
+  }
+}
+
+// export function updateDateRecords(year) {
+//   return {
+//     type: ACTIONS.YEAR_SELECTED,
+//     payload: db.getRecordsFromYear(year)
+//   }
+// }

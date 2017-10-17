@@ -34,10 +34,6 @@ export class Year {
     this.addDate(record.date).addRecord(record);
   }
 
-  // getDay(date) {
-  //   return _.first(this.dates.filter(dateRecord => dateRecord.dateStr === date));
-  // }
-
   /**
    * Attach an array of "Day" typed elements to this.dates
    */
@@ -46,5 +42,11 @@ export class Year {
     this.dates = dates;
     _.reverse(this.dates);
     return this;
+  }
+
+  removeDate(date) {
+    this.dates = _.remove(this.dates, ydate => {
+      return ydate !== date;
+    });
   }
 }

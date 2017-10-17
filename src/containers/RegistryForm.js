@@ -35,7 +35,7 @@ class RegistryForm extends React.Component {
 
           // To know if year-record repopulation is needed, lets take a
           // look into props.yearRecords and see if one is from same year
-          if (_.first(this.props.yearRecords).date.year() === year) {
+          if (this.props.yearRecords.length === 0 || _.first(this.props.yearRecords).date.year() === year) {
             this.props.selectYear(year);
           }
         } else {

@@ -1,5 +1,6 @@
 import { Comic } from "../classes/Comic";
 import { ACTIONS } from "../constants/cons";
+import _ from "lodash";
 
 // "state" argument is not app state, but the state this reducer is responsible of
 export default function (state = [], action) {
@@ -13,6 +14,10 @@ export default function (state = [], action) {
   switch (action.type) {
     case ACTIONS.YEAR_SELECTED:
       return [...action.payload.map(comic => new Comic(comic))];
+
+    case ACTIONS.RECORD_DELETE:
+      state = _.remove(state, record => record.id !== action.payload.removedRecord.id);
+      return state;
 
     default:
       return state;

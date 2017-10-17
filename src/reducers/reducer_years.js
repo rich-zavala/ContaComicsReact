@@ -14,17 +14,35 @@ export default function (state = [], action) {
   switch (action.type) {
     case ACTIONS.YEARS_LIST:
       yearsCatalog = action.payload.map(year => new Year(year));
-      return [...yearsCatalog, ...state];
+      // return [...yearsCatalog, ...state];
+      return [...yearsCatalog];
 
     case ACTIONS.YEAR_UPDATE:
       let updatedYear = new Year(_.first(action.payload));
-      let index = _.findIndex(yearsCatalog, (year) => year.name === updatedYear.name);
+      let index = _.findIndex(yearsCatalog, year => year.name === updatedYear.name);
       if (index >= 0) { // Year exists
         yearsCatalog[index] = updatedYear;
       } else { // Add year and sort
         yearsCatalog.push(updatedYear);
         yearsCatalog = yearsCatalog.sort((a, b) => b.name - a.name);
       }
+      return [...yearsCatalog];
+
+    case ACTIONS.RECORD_DELETE:
+      // console.log(action.payload);
+      if (action.payload.removedDate) {
+        yearsCatalog.forEach((year, index) => {
+          if (year.name === action.payload.year.name) {
+            yearsCatalog[index] = action.payload.year;
+
+            if (action.payload.removedYear) {
+              yearsCatalog.splice(index, 1);
+              return;
+            }
+          }
+        });
+      }
+      console.log("yearsCatalog", [...yearsCatalog]);
       return [...yearsCatalog];
 
     default:

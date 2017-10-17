@@ -7,7 +7,7 @@ import moment from "moment";
 const db = new Dexie(DB_NAME);
 db.version(1).stores({
   years: "&name",
-  records: "&id"
+  records: "&id, date"
 });
 
 export class DB {
@@ -70,6 +70,54 @@ export class DB {
         return record.date.split("-")[0] === year.toString();
       })
       .toArray();
+  }
+
+  updateRecord(record) {
+    return db.records.update({ id: record.id }, record.storable);
+  }
+
+  deleteRecord(record) {
+    let res = {
+      removedRecord: record,
+      removedDate: false,
+      removedYear: false,
+      updatedDate: record.dateStr
+    };
+    return db.records.delete(record.id)
+      .then(() => {
+        return db.records.where({ date: res.updatedDate })
+          .count()
+          .then(count => {
+            if (count === 0) { // Delete this date from years
+              res.removedDate = true;
+              return this.getYear(record.date.year())
+                .then(year => {
+                  year = new Year(year[0]);
+                  year.removeDate(res.updatedDate);
+                  res.year = year;
+                  let execution;
+                  if (year.dates.length > 0) { // Update year
+                    execution = this.updateYear;
+                  } else { // Delete year
+                    res.removedYear = true;
+                    execution = this.deleteYear;
+                  }
+
+                  return execution.bind(this)(year).then(() => res);
+                });
+            } else {
+              return res;
+            }
+          });
+      });
+  }
+
+  updateYear(year) {
+    return db.years.update({ name: year.name }, this.storable(year));
+  }
+
+  deleteYear(year) {
+    return db.years.delete(year.name);
   }
 
   clearYear() {

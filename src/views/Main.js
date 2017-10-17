@@ -11,7 +11,7 @@ export default class Landing extends React.Component {
   constructor() {
     super();
     this.state = {
-      section: "form"
+      section: "records"
     };
   }
 
@@ -67,7 +67,7 @@ export default class Landing extends React.Component {
       .then(() => {
         db.clearRecords()
           .then(() => {
-            let limit = 10;
+            let limit = 3;
             let current = 0;
             let adding = () => db.addRecord(genComic(current)).then(() => {
               if (current < limit) {

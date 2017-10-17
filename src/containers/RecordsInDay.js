@@ -1,19 +1,20 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-// import { selectYear } from "../actions/index";
+import Record from "./Record";
+import { deleteRecord } from "../actions/index";
 
 class RecordsInDay extends React.Component {
   records = [];
+  constructor(props) {
+    super(props);
+    this.records = this.filterRecords(props.yearRecords);
+  }
 
   render() {
     let records;
     if (this.records) {
-      records = this.records.map(record => {
-        return (
-          <div key={record.id}>{record.title} #{record.volumen}</div>
-        );
-      });
+      records = this.records.map(record => <Record Data={record} key={record.id} />);
     }
 
     return (
@@ -27,8 +28,18 @@ class RecordsInDay extends React.Component {
     );
   }
 
-  componentWillReceiveProps(props) {
-    this.records = props.yearRecords.filter(record => record.dateStr === props.day);
+  shouldComponentUpdate(nextProps) {
+    let newRecords = this.filterRecords(nextProps.yearRecords);
+    if (newRecords.length !== this.records.length) {
+      this.records = newRecords;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  filterRecords(collection) {
+    return collection.filter(record => record.dateStr === this.props.day);
   }
 }
 
@@ -37,8 +48,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  // return bindActionCreators({ selectYear }, dispatch);
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({ deleteRecord }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecordsInDay);
