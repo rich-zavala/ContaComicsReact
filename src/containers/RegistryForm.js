@@ -24,7 +24,6 @@ class RegistryForm extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    console.log(this.props, this.state);
     let recordObject = new Comic(this.fieldsValues());
     this.props.addRecord(recordObject)
       .then(r => {
