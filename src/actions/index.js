@@ -45,3 +45,17 @@ export function deleteRecord(record) {
     payload: db.deleteRecord(record)
   }
 }
+
+export function getTitles() {
+  return {
+    type: ACTIONS.GET_TITLES,
+    payload: db.getTitles()
+  }
+}
+
+export function getRecordsByTitle(title) {
+  return {
+    type: ACTIONS.GET_TITLES_RECORDS,
+    payload: db.getRecordsByTitle(title)
+  }
+}

@@ -9,6 +9,10 @@ class Record extends React.Component {
   constructor(props) {
     super(props);
     this.record = this.props.Data;
+    this.state = {
+      record: this.props.Data
+    };
+    // this.record = this.props.Data;
   }
 
   render() {
@@ -21,6 +25,20 @@ class Record extends React.Component {
         <button className="btn btn-xs btn-danger pull-right" onClick={this.delete.bind(this)}>☓</button>
       </div>
     );
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (this.compareProps(newProps)) {
+      this.record = newProps.updatedRecord;
+    }
+  }
+
+  shouldComponentUpdate(newProps) {
+    return this.compareProps(newProps);
+  }
+
+  compareProps(newProps) {
+    return newProps.updatedRecord && newProps.updatedRecord.id === this.record.id;
   }
 
   setClassNames() {
@@ -38,20 +56,9 @@ class Record extends React.Component {
   }
 
   changeOwned() {
-    // if (this.record.owned === false || confirm("Proceed to uncheck this record?")) {
-    this.changeOwnedUpdate();
-    this.props.updateRecord(this.record)
-      .catch(e => {
-        this.record.owned = !this.record.owned;
-        this.forceUpdate();
-        this.changeOwnedUpdate();
-        console.warn(e);
-      });
-  }
-
-  changeOwnedUpdate() {
     this.record.owned = !this.record.owned;
-    this.forceUpdate();
+    this.setState({ record: this.record });
+    this.props.updateRecord(this.record);
   }
 
   delete() {

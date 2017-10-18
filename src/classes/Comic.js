@@ -136,8 +136,7 @@ export class Comic {
   }
   set owned(d) {
     this._owned = typeof d !== "undefined" && (d === true || d === 1);
-    if (this.owned)
-      this.ownedDate = moment();
+    this.ownedDate = this.owned ? moment() : undefined;
   }
   get ownedStr() {
     return this._owned ? "Yes" : "No";

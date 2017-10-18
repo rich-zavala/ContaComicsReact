@@ -16,7 +16,7 @@ export default function (state = [], action) {
       return [...action.payload.map(comic => new Comic(comic))];
 
     case ACTIONS.RECORD_DELETE:
-      state = _.remove(state, record => record.id !== action.payload.removedRecord.id);
+      _.remove(state, record => record.id === action.payload.removedRecord.id);
       // console.log(state);
       return state;
 

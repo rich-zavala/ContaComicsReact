@@ -45,8 +45,8 @@ export class Year {
   }
 
   removeDate(date) {
-    this.dates = _.remove(this.dates, ydate => {
-      return ydate !== date;
+    _.remove(this.dates, ydate => {
+      return ydate === date;
     });
   }
 }

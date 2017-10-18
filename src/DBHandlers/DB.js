@@ -7,7 +7,8 @@ import moment from "moment";
 const db = new Dexie(DB_NAME);
 db.version(1).stores({
   years: "&name",
-  records: "&id, date"
+  records: "&id, date, title",
+  titles: "&title"
 });
 
 export class DB {
@@ -44,6 +45,7 @@ export class DB {
 
     return db.records.add(record.storable)
       .then(() => {
+        this.addTitle(record.title);
         return this.addDate(record.date);
       });
   }
@@ -73,7 +75,7 @@ export class DB {
   }
 
   updateRecord(record) {
-    return db.records.update({ id: record.id }, record.storable);
+    return db.records.update({ id: record.id }, record.storable).then(() => record);
   }
 
   deleteRecord(record) {
@@ -81,33 +83,38 @@ export class DB {
       removedRecord: record,
       removedDate: false,
       removedYear: false,
+      removedTitle: false,
       updatedDate: record.dateStr
     };
     return db.records.delete(record.id)
       .then(() => {
-        return db.records.where({ date: res.updatedDate })
-          .count()
-          .then(count => {
-            if (count === 0) { // Delete this date from years
-              res.removedDate = true;
-              return this.getYear(record.date.year())
-                .then(year => {
-                  year = new Year(year[0]);
-                  year.removeDate(res.updatedDate);
-                  res.year = year;
-                  let execution;
-                  if (year.dates.length > 0) { // Update year
-                    execution = this.updateYear;
-                  } else { // Delete year
-                    res.removedYear = true;
-                    execution = this.deleteYear;
-                  }
+        return this.deleteTitle(record.title)
+          .then(removedTitle => {
+            res.removedTitle = removedTitle;
+            return db.records.where({ date: res.updatedDate })
+              .count()
+              .then(count => {
+                if (count === 0) { // Delete this date from years
+                  res.removedDate = true;
+                  return this.getYear(record.date.year())
+                    .then(year => {
+                      year = new Year(year[0]);
+                      year.removeDate(res.updatedDate);
+                      res.year = year;
+                      let execution;
+                      if (year.dates.length > 0) { // Update year
+                        execution = this.updateYear;
+                      } else { // Delete year
+                        res.removedYear = true;
+                        execution = this.deleteYear;
+                      }
 
-                  return execution.bind(this)(year).then(() => res);
-                });
-            } else {
-              return res;
-            }
+                      return execution.bind(this)(year).then(() => res);
+                    });
+                } else {
+                  return res;
+                }
+              });
           });
       });
   }
@@ -120,7 +127,31 @@ export class DB {
     return db.years.delete(year.name);
   }
 
+  addTitle(title) {
+    return db.titles.put({ title });
+  }
+
+  getTitles() {
+    return db.titles.orderBy("title").toArray();
+  }
+
+  deleteTitle(title) {
+    return this.getRecordsByTitle(title)
+      .then(records => {
+        if (records.length === 0) {
+          db.titles.delete(title);
+          return true;
+        }
+        return false
+      });
+  }
+
+  getRecordsByTitle(title) {
+    return db.records.filter(record => record.title === title).toArray();
+  }
+
   clearYear() {
+    db.titles.clear();
     return db.years.clear();
   }
 
