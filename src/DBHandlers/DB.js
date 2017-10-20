@@ -48,7 +48,7 @@ export class DB {
 
     return db.records.add(record.storable)
       .then(() => {
-        this.addTitle(record.title);
+        this.addTitle(record);
         return this.addDate(record.date);
       });
   }
@@ -137,9 +137,10 @@ export class DB {
     return db.years.delete(year.name);
   }
 
-  addTitle(title) {
+  addTitle(record) {
     this.c('addTitle');
-    return db.titles.put({ title });
+    return this.updateTitle(record.title)
+      .then(data => db.titles.put({ title: record.title, total: data.total, last: data.last }));
   }
 
   getTitles() {
@@ -152,10 +153,33 @@ export class DB {
     return this.getRecordsByTitle(title)
       .then(records => {
         if (records.length === 0) {
-          db.titles.delete(title);
-          return true;
+          return db.titles.delete(title).then(() => true);
+        } else {
+          return this.updateTitle(title).then(() => false);
         }
-        return false
+      });
+  }
+
+  updateTitle(title) {
+    return this.getRecordsByTitle(title)
+      .then(records => {
+        let last = 0;
+        let sum = 0;
+        if (records.length > 0) {
+          sum = records
+            .map(record => {
+              if (record.volumen > last) {
+                last = record.volumen;
+              }
+              return record.price;
+            })
+            .reduce((total, record) => total + record);
+        }
+        return {
+          title: title,
+          total: sum,
+          last: last
+        };
       });
   }
 
