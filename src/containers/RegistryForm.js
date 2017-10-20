@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { addRecord, updateYear, selectYear } from "../actions/index";
+import { addRecord, updateYear, selectYear, recordAdded } from "../actions/index";
 import FormField from "../components/Field";
 import { Comic, ComicFields } from "../classes/Comic";
 import * as _ from "lodash";
@@ -30,6 +30,7 @@ class RegistryForm extends React.Component {
         if (!r.error) {
           let year = recordObject.date.year();
           this.props.updateYear(year);
+          this.props.recordAdded(recordObject);
           this.forceUpdate(); // Reset form
 
           // To know if year-record repopulation is needed, lets take a
@@ -61,7 +62,7 @@ function mapStateToProps(state) { // This is how React and Redux get glued!
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ addRecord, updateYear, selectYear }, dispatch);
+  return bindActionCreators({ addRecord, updateYear, selectYear, recordAdded }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegistryForm);

@@ -25,6 +25,13 @@ export function addRecord(record) {
   }
 }
 
+export function recordAdded(record) {
+  return {
+    type: ACTIONS.RECORD_ADDED,
+    payload: record
+  }
+}
+
 export function updateYear(year) {
   return {
     type: ACTIONS.YEAR_UPDATE,
@@ -57,5 +64,12 @@ export function getRecordsByTitle(title) {
   return {
     type: ACTIONS.GET_TITLES_RECORDS,
     payload: db.getRecordsByTitle(title)
+  }
+}
+
+export function collapseTitleList(title) {
+  return {
+    type: ACTIONS.COLLAPSE_TITLE_LIST,
+    payload: title
   }
 }

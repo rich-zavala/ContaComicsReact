@@ -1,30 +1,31 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import Record from "./Record";
-import { getTitles, getRecordsByTitle } from "../actions/index";
+import Title from "./Title";
+import { getTitles, getRecordsByTitle, collapseTitleList } from "../actions/index";
+import * as _ from "lodash";
 
-class FormField extends React.Component {
+class Titles extends React.Component {
+  titles = [];
+  extended = {};
+
   constructor(props) {
     super(props);
     this.props.getTitles();
   }
 
   render() {
-    let _this = this;
-    let titles = this.props.titles.map(title => {
-      let records;
-      if (_this.props.titlesRecords[title]) {
-        records = _this.props.titlesRecords[title].map(record => <Record Data={record} key={record.id} />);
-      }
-
-      return (
+    console.log('Rendering Titles', this.props.titles);
+    let titles = [];
+    this.titles = _.keys(this.props.titles);
+    for (let title in this.props.titles) {
+      titles.push(
         <div key={title}>
           <h4 onClick={() => this.getRecords(title)}>{title}</h4>
-          <div>{records}</div>
+          <Title title={title} key={title} />
         </div>
       );
-    });
+    }
 
     return (
       <div>
@@ -35,7 +36,18 @@ class FormField extends React.Component {
   }
 
   getRecords(title) {
-    this.props.getRecordsByTitle(title);
+    if (!this.extended[title]) {
+      this.extended[title] = true;
+      this.props.getRecordsByTitle(title);
+    } else {
+      delete this.extended[title];
+      this.props.collapseTitleList(title);
+    }
+  }
+
+  shouldComponentUpdate(newProps) {
+    let newTitles = _.keys(newProps.titles);
+    return !_.isEqual(newTitles, this.titles);
   }
 }
 
@@ -44,7 +56,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ getTitles, getRecordsByTitle }, dispatch);
+  return bindActionCreators({ getTitles, getRecordsByTitle, collapseTitleList }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FormField);
+export default connect(mapStateToProps, mapDispatchToProps)(Titles);

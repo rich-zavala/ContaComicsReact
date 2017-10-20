@@ -13,6 +13,7 @@ db.version(1).stores({
 
 export class DB {
   addYear(year) {
+    this.c('addYear');
     if (!(year instanceof Year)) {
       year = new Year({ name: year });
     }
@@ -20,6 +21,7 @@ export class DB {
   }
 
   addDate(date) {
+    this.c('addDate');
     date = moment(date);
     let dateYear = date.year();
     return db.years.get(dateYear)
@@ -39,6 +41,7 @@ export class DB {
   }
 
   addRecord(record) {
+    this.c('addRecord');
     if (!(record instanceof Comic)) {
       record = new Comic(record);
     }
@@ -51,10 +54,12 @@ export class DB {
   }
 
   getYears() {
+    this.c('getYears');
     return db.years.reverse().toArray();
   }
 
   getYear(year) {
+    this.c('getYear');
     return db.years.filter(record => record.name.toString() === year.toString()).toArray();
   }
 
@@ -63,6 +68,7 @@ export class DB {
   }
 
   getRecordsFromYear(year) {
+    this.c('getRecordsFromYear');
     if (year instanceof Year) {
       year = year.name;
     }
@@ -75,10 +81,12 @@ export class DB {
   }
 
   updateRecord(record) {
+    this.c('updateRecord');
     return db.records.update({ id: record.id }, record.storable).then(() => record);
   }
 
   deleteRecord(record) {
+    this.c('deleteRecord');
     let res = {
       removedRecord: record,
       removedDate: false,
@@ -120,22 +128,27 @@ export class DB {
   }
 
   updateYear(year) {
+    this.c('updateYear');
     return db.years.update({ name: year.name }, this.storable(year));
   }
 
   deleteYear(year) {
+    this.c('deleteYear');
     return db.years.delete(year.name);
   }
 
   addTitle(title) {
+    this.c('addTitle');
     return db.titles.put({ title });
   }
 
   getTitles() {
+    this.c('getTitles');
     return db.titles.orderBy("title").toArray();
   }
 
   deleteTitle(title) {
+    this.c('deleteTitle');
     return this.getRecordsByTitle(title)
       .then(records => {
         if (records.length === 0) {
@@ -147,15 +160,22 @@ export class DB {
   }
 
   getRecordsByTitle(title) {
+    this.c('getRecordsByTitle');
     return db.records.filter(record => record.title === title).toArray();
   }
 
   clearYear() {
+    this.c('clearYear');
     db.titles.clear();
     return db.years.clear();
   }
 
   clearRecords() {
+    this.c('clearRecords');
     return db.records.clear();
+  }
+
+  c(msg) {
+    // console.log('DB-Call', msg);
   }
 }

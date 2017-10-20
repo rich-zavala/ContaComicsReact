@@ -18,8 +18,8 @@ export function GenerateComicId(rr) {
  */
 export function ComicFields() {
   return [
-    new ComicField("Title", "text", "Guardians Of The Galaxy"),
-    new ComicField("Volumen", "number", "1"),
+    new ComicField("Title", "text", "Avengers"),
+    new ComicField("Volumen", "number", "11"),
     new ComicField("Variant", "text", undefined, false),
     new ComicField("Price", "number", "26"),
     new ComicField("Date", "date"),
