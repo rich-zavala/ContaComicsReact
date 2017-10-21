@@ -99,7 +99,7 @@ export class Comic {
 
   _variant;
   get variant() {
-    return this._variant;
+    return this._variant || null;
   }
   set variant(d) {
     if (d)

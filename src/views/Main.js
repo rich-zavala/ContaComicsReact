@@ -1,12 +1,12 @@
 import React from "react";
 import moment from "moment";
-import { DB } from "../DBHandlers/DB";
+// import { DB } from "../DBHandlers/DB";
+import { DB as FB } from "../DBHandlers/DB.Firebase";
 import { Comic } from "../classes/Comic";
-
 import RegistryForm from "../containers/RegistryForm";
 import YearList from "../containers/YearList";
 import Titles from "../containers/Titles";
-// import TestComponent from "../containers/Tests";
+
 import * as _ from "lodash";
 
 export default class Landing extends React.Component {
@@ -47,7 +47,9 @@ export default class Landing extends React.Component {
   }
 
   populateDB() {
-    let db = new DB();
+    // let db = new DB();
+    let db = new FB();
+
     let pad = (num, size) => {
       var s = num + "";
       while (s.length < size) s = "0" + s;
@@ -71,15 +73,15 @@ export default class Landing extends React.Component {
       .then(() => {
         db.clearRecords()
           .then(() => {
-            let limit = 10;
+            let limit = 30;
             let current = 0;
             let adding = () => db.addRecord(genComic(current)).then(() => {
               if (current < limit) {
                 current++;
                 adding();
               } else {
-                // console.log("DB reseting done! > " + moment().diff(timestamp));
-                window.location.reload();
+                console.log("DB reseting done!");
+                // window.location.reload();
               }
             });
 
@@ -92,29 +94,13 @@ export default class Landing extends React.Component {
 
 function getTitle() {
   let titles = [
-    "Batman",
-    "Spider-Man",
-    "Hulk",
+    // "Batman",
+    // "Spider-Man",
+    // "Hulk",
     "Avengers",
     "Invincible"
   ];
   return _.sample(titles);
 }
 
-/*export default class Landing extends React.Component {
-  db = new DB();
-
-  render() {
-    return (
-      <div>
-        <fieldset>
-          <legend>Create a new record</legend>
-          <RegistryForm DBInstance={this.db} />
-        </fieldset>
-        <hr />
-        <CheckList DBInstance={this.db} />
-      </div>
-    )
-  }
-}
-*/
+new FB().c('Firebase is ON!');
