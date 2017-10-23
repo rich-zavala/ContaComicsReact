@@ -130,6 +130,10 @@ export class Comic {
     return this._date.format(DATE_FORMAT_COMPARE);
   }
 
+  get year() {
+    return this.date.year();
+  }
+
   _owned = false;
   get owned() {
     return this._owned;
@@ -165,6 +169,7 @@ export class Comic {
       variant: this.variant,
       price: this.price,
       date: this.dateStr,
+      year: this.year,
       owned: this.owned,
       ownedDate: this.ownedDateStr
     };

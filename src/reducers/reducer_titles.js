@@ -31,11 +31,14 @@ export default function (state = {}, action) {
     case ACTIONS.RECORD_ADDED:
       let title = action.payload.title;
       if (!titles[title]) {
-        titles[title] = action.payload;
+        titles[title] = [action.payload];
       } else {
         titles[title].push(action.payload);
       }
-      sortTitles(title);
+
+      if (_.size(titles) > 1) {
+        sortTitles(title);
+      }
       return _.clone(titles);
 
     case ACTIONS.COLLAPSE_TITLE_LIST:

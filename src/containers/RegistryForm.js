@@ -27,19 +27,19 @@ class RegistryForm extends React.Component {
     let recordObject = new Comic(this.fieldsValues());
     this.props.addRecord(recordObject)
       .then(r => {
-        if (!r.error) {
-          let year = recordObject.date.year();
-          this.props.updateYear(year);
+        if (!r.payload || !r.payload.error) {
+          let year = recordObject.year;
+          this.props.updateYear(year, recordObject);
           this.props.recordAdded(recordObject);
           this.forceUpdate(); // Reset form
 
           // To know if year-record repopulation is needed, lets take a
           // look into props.yearRecords and see if one is from same year
-          if (this.props.yearRecords.length === 0 || _.first(this.props.yearRecords).date.year() === year) {
+          if (this.props.yearRecords.length === 0 || _.first(this.props.yearRecords).year === year) {
             this.props.selectYear(year);
           }
         } else {
-          console.log("This record is already stored :(", r.payload.message)
+          console.log("This record is already stored :(", r.payload.msg)
         }
       });
   }

@@ -1,5 +1,5 @@
 import { ACTIONS } from "../constants/cons";
-import { DB } from "../DBHandlers/DB";
+import { DB } from "../DBHandlers/DB.Firebase";
 
 const db = new DB();
 
@@ -32,10 +32,10 @@ export function recordAdded(record) {
   }
 }
 
-export function updateYear(year) {
+export function updateYear(year, newRecord) {
   return {
     type: ACTIONS.YEAR_UPDATE,
-    payload: db.getYear(year)
+    payload: db.getYear(year, newRecord)
   }
 }
 
@@ -61,6 +61,7 @@ export function getTitles() {
 }
 
 export function getRecordsByTitle(title) {
+  console.log("getRecordsByTitle", title);
   return {
     type: ACTIONS.GET_TITLES_RECORDS,
     payload: db.getRecordsByTitle(title)

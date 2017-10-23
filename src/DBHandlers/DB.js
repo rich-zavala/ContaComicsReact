@@ -55,12 +55,12 @@ export class DB {
 
   getYears() {
     this.c('getYears');
-    return db.years.reverse().toArray();
+    return db.years.reverse().toArray()[0];
   }
 
   getYear(year) {
     this.c('getYear');
-    return db.years.filter(record => record.name.toString() === year.toString()).toArray();
+    return db.years.filter(record => record.name.toString() === year.toString()).toArray()[0];
   }
 
   storable(obj) {
@@ -104,7 +104,7 @@ export class DB {
               .then(count => {
                 if (count === 0) { // Delete this date from years
                   res.removedDate = true;
-                  return this.getYear(record.date.year())
+                  return this.getYear(record.year)
                     .then(year => {
                       year = new Year(year[0]);
                       year.removeDate(res.updatedDate);

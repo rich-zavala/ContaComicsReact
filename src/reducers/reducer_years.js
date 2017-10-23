@@ -18,7 +18,7 @@ export default function (state = [], action) {
       return [...yearsCatalog];
 
     case ACTIONS.YEAR_UPDATE:
-      let updatedYear = new Year(_.first(action.payload));
+      let updatedYear = new Year(action.payload);
       let index = _.findIndex(yearsCatalog, year => year.name === updatedYear.name);
       if (index >= 0) { // Year exists
         yearsCatalog[index] = updatedYear;

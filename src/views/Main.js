@@ -13,7 +13,7 @@ export default class Landing extends React.Component {
   constructor() {
     super();
     this.state = {
-      section: "titles"
+      section: "records"
     };
   }
 
@@ -73,7 +73,7 @@ export default class Landing extends React.Component {
       .then(() => {
         db.clearRecords()
           .then(() => {
-            let limit = 30;
+            let limit = 5;
             let current = 0;
             let adding = () => db.addRecord(genComic(current)).then(() => {
               if (current < limit) {
@@ -103,4 +103,4 @@ function getTitle() {
   return _.sample(titles);
 }
 
-new FB().c('Firebase is ON!');
+// new FB().c('Firebase is ON!');
