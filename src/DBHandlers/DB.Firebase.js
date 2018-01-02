@@ -20,17 +20,11 @@ const db = app.database();
 
 export class DB {
 
-  constructor() {
-    console.warn("Config", config);
-    db.ref('records/').on('child_removed', snap => {
-      console.log("removed", snap);
-    });
-
-    // db.ref('records/').once('value').then(data => {
-    //   let sn = data.val();
-    //   console.log(sn);
-    // });
-  }
+  // constructor() {
+  // db.ref('records/').on('child_removed', snap => {
+  //   console.log("removed", snap);
+  // });
+  // }
 
   clearYear() {
     return db.ref('years/').set({});
@@ -233,7 +227,6 @@ export class DB {
     return db.ref('years/' + year)
       .once('value')
       .then(snap => {
-        console.log('getYear', year, snap.val());
         let yearData = snap.val();
         if (!yearData) { // New year!
           yearData = { name: year, dates: [newRecord.dateStr] };
@@ -248,10 +241,7 @@ export class DB {
     this.c('updateYear');
     return db.ref('years/' + year.name)
       .set(this.storable(year))
-      .then((r) => {
-        console.log(r, year);
-        return year
-      });
+      .then((r) => year);
   }
 
   deleteYear(year) {
